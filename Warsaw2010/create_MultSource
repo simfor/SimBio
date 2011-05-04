@@ -1,0 +1,3 @@
+CREATE TABLE human_MultSource100728_2145 AS SELECT human_100727unred.* FROM human_100727unred INNER JOIN (
+SELECT protA, protB, COUNT(*) FROM human_100727unred GROUP BY protA,protB HAVING COUNT(*)>1) as human2
+ON human_100727unred.protA=human2.protA and human_100727unred.protB=human2.protB; 
