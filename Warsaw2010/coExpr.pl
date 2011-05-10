@@ -1,8 +1,9 @@
+#Adds column with co-Expression score to tab-file. The score corresponds to the Uniprot-IDs in column 1 and 2
 use strict;
 use LWP::Simple;
 
 my $infile = $ARGV[0]; 
-my $outfile = $ARGV[1]; #utfil
+my $outfile = $ARGV[1]; #outfile
 
 open(my $IN, $infile);
 my @rader = <$IN>;
@@ -16,13 +17,9 @@ my $procent;
 
 foreach (@rader){
 	@klippt = split(/\t/, $_);
-#	@Aklippt = split(/\|/ , $klippt[0]); #splitar första kolumnen vid |
-#	@Bklippt = split(/\|/ , $klippt[1]); #splitar andra kolumnen vid |
-#	@uniprotA = split(/:/ , $Aklippt[0]); 
-#	@uniprotB = split(/:/ , $Bklippt[0]); 
 		
-	$arrExpIdA = &ArrExID($klippt[0]);  #`/usr/bin/perl conv_uniprotID_to_arrayexpressID.pl $klippt[0]`;
-	$arrExpIdB = &ArrExID($klippt[1]);  #`/usr/bin/perl conv_uniprotID_to_arrayexpressID.pl $klippt[1]`;
+	$arrExpIdA = &ArrExID($klippt[0]);
+	$arrExpIdB = &ArrExID($klippt[1]);
 	
 	print UT "$klippt[0]\t$klippt[1]\t$arrExpIdA\t$arrExpIdB\t$klippt[2]\t$klippt[3]";
 	
@@ -61,22 +58,6 @@ sub ArrExID{
 		}
 		return $ID;
 	}
-		
-#	my $url = "http://biit.cs.ut.ee/gprofiler/gconvert.cgi?organism=$organism&output=txt&target=$target_database&query=$uniprot";
-	
-#	my $big_line = "";
-#	my $query = get $url;
-	
-#	my @query = split(/\n/, $query);
-#	for my $line(@query) {
-#		chomp($line);
-#		$big_line = "$big_line $line";
-#	}
-#	if ($big_line =~ m/<pre>(.*)<\/pre>/) {
-#		my @array = split(/\t/, $1);
-#		return $array[3];
-#	}
-	
 }
 
 sub mem_yeast_ppi{
