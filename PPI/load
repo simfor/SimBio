@@ -1,0 +1,5 @@
+LOAD DATA LOCAL INFILE '/home/simon/workspace/GoldStandard/guld/silver_human100729_1030'
+   INTO TABLE silver_human100729_1025
+   FIELDS TERMINATED BY '\t' 
+   LINES TERMINATED BY '\n'
+   (protA, protB, altA, altB, aliasA, aliasB, expMet, firstAuthor, pubmed, taxA, taxB, intType, sourceDatabase, IntID, Confidence);
