@@ -1,5 +1,0 @@
-#Warning slow! Remember to index
-#You need two identical tables
-
-delete from gold_yeast100728_2230unred_noSingle where 
-(protA, protB) = any (select protA, protB from gold_yeast100728_2230unred_noSingle2 group by protA, protB having count(*)=1); 

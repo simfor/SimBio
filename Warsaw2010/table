@@ -1,3 +1,0 @@
-create table silver_human100729_1025 (protA varchar(70), protB varchar(70), altA varchar(200), altB varchar(200), aliasA varchar(200), aliasB varchar(200), expMet varchar(70),
-firstAuthor varchar(200), pubmed varchar(200), taxA varchar(200), taxB varchar(200), intType varchar(200), sourceDatabase varchar(200), IntID varchar(200),
-Confidence varchar(200) );

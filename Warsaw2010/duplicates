@@ -1,3 +1,0 @@
-CREATE TABLE silver_human100729_1025nonred AS SELECT * 
-   FROM silver_human100729_1025
-   GROUP BY protA, protB, pubmed; 
