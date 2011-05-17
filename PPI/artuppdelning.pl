@@ -11,7 +11,7 @@ $dbh = DBI->connect("dbi:mysql:database=$database;" .
  "host=$hostname;port=3306", $username, $password);
 
 $SQL= "select * from $table where taxA like '%4932%' and taxB like '%4932%';"; 
-
+knark
 $Select = $dbh->prepare($SQL);
 $Select->execute();
 
