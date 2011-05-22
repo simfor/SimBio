@@ -1,5 +1,7 @@
 #Adds column with co-Expression score to tab-file. The score corresponds to the Uniprot-IDs in column 1 and 2
+#Author: Simon Forsberg
 use strict;
+use warnings;
 use LWP::Simple;
 
 my $infile = $ARGV[0]; 
@@ -33,12 +35,13 @@ sub ArrExID{
 	my $target_database = "AFFY_YG_S98";
 	my $uniprot = $_[0];
 	my $ID = "";
+	my $ID_path = "/home/simon/workspace/Data/ArrExID/";
 	
 	#Kollar om ArrExID-queryt redan gjorts och läser isf in det från lokal fil
-	if(-e "/home/simon/workspace/GoldStandard/coExpr/ArrExID/$uniprot"){
-		open(uniprot, "/home/simon/workspace/GoldStandard/coExpr/ArrExID/$uniprot");
-		$ID = <uniprot>;
-		close uniprot;
+	if(-e "$ID_path$uniprot"){
+		open(ID, "$ID_path$uniprot");
+		$ID = <ID>;
+		close ID;
 	}
 	else{
 		my $url = "http://biit.cs.ut.ee/gprofiler/gconvert.cgi?organism=$organism&output=txt&target=$target_database&query=$uniprot";
@@ -52,7 +55,7 @@ sub ArrExID{
 		if ($big_line =~ m/<pre>(.*)<\/pre>/) {
 			my @array = split(/\t/, $1);
 			$ID = $array[3];
-			open(ID_UT, ">/home/simon/workspace/GoldStandard/coExpr/ArrExID/$uniprot");
+			open(ID_UT, ">$ID_path$uniprot");
 			print ID_UT $ID;
 			close ID_UT;
 		}
@@ -64,10 +67,11 @@ sub mem_yeast_ppi{
 	my $affyIDA = $_[0];
 	my $affyIDB = $_[1];
 	my $Expr;
+	my $query_path = "/home/simon/workspace/Data/coExpr_querys/";
 	
 	#Kollar om ArrExID-queryt redan gjorts och läser isf in det från lokal fil
-	if(-e "/home/simon/workspace/GoldStandard/coExpr/coExpr_querys/$affyIDA"){
-		open(Expr, "/home/simon/workspace/GoldStandard/coExpr/coExpr_querys/$affyIDA");
+	if(-e "$query_path$affyIDA"){
+		open(Expr, "$query_path$affyIDA");
 		$Expr = <Expr>;
 		close Expr;
 	}
@@ -96,7 +100,7 @@ sub mem_yeast_ppi{
 			#	print join("\t", $score, $gene, $affy_id, $gene_desc), "\n" ;
 				if ($affyIDB =~ m/$affy_id/i) {
 					$Expr = "$score";
-					open(ID_UT, ">/home/simon/workspace/GoldStandard/coExpr/ArrExID/$uniprot");
+					open(ID_UT, ">$query_path$uniprot");
 					print ID_UT $ID;
 					close ID_UT;	
 				}

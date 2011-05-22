@@ -8,7 +8,7 @@ my $outfile = $ARGV[1]; #outfile
 open(my $IN, $infile);
 open(UT, ">$outfile");
 
-my $seqPath = "/home/simon/workspace/sequences/AA/"; #Change to your fasta-folder
+my $seqPath = "/home/simon/workspace/Data/sequences/AA/"; #Change to your fasta-folder
 my $i = 0;
 
 while(<$IN>){
