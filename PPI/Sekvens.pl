@@ -1,6 +1,7 @@
 #Adds two columns with AA-sequences to tab-file. The sequnces corresponds to the Uniprot-IDs in column 1 and 2
 use strict;
 use warnings;
+aerälkgmalkemrg
 use LWP::Simple;
 
 my $infile = $ARGV[0]; 
