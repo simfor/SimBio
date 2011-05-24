@@ -1,39 +1,45 @@
+#This script takes a tab-separated file as input and replaces the uniprotID:s in column 1 and 2 with the newest synonym
+#Author: Simon Forsberg
 use strict;
 use warnings;
 use LWP::Simple;
 
-my $infile = $ARGV[0]; 
-my $outfile = $ARGV[1]; #outfile
+my $infile  = $ARGV[0];
+my $outfile = $ARGV[1];    #outfile
 
-open(my $IN, $infile) || die "Could not open $infile: $!, $?";
-open(my $UT, ">", "$outfile") || die "Could not open $outfile: $!, $?";
+open( my $IN, $infile ) || die "Could not open $infile: $!, $?";
+open( my $UT, ">", "$outfile" ) || die "Could not open $outfile: $!, $?";
 
-my $uniprot_path = "/home/simon/workspace/Data/uniprotentries"
+my $uniprot_path = "/home/simon/workspace/Data/uniprot_entries/text";
 
-while(<$IN>){
-	@klippt = split(/\t/, $_);
+  while (<$IN>) {
+	my @klippt   = split( /\t/, $_ );
 	my $uniprotA = $klippt[0];
 	my $uniprotB = $klippt[1];
 
-	$newID_A = &map($uniprotA);
-	$newID_B = &map($uniprotB);
-	
-	print $UT "$newID_A\t$newID_B\t$klippt[2]\t$klippt[3]\n";
+	my $newID_A = &map($uniprotA);
+	my $newID_B = &map($uniprotB);
+
+	print $UT "$newID_A\t$newID_B\t$klippt[2]\t$klippt[3]";
 }
 
 sub map {
-	if(-e "$uniprot_path/$_[0].txt"){
-		open(ID_IN, "$uniprot_path/$_[0].txt");
-		my @uniprot_entry = <ID_IN>;
+	my @uniprot_entry = "";
+	my $new_uniprotID = $_[0];
+	
+	#Checks if the Uniprot entry exists locally
+	if ( -e "$uniprot_path/$_[0].txt" ) {
+		open( ID_IN, "$uniprot_path/$_[0].txt" );
+		@uniprot_entry = <ID_IN>;
 		close ID_IN;
 	}
-	else{
+	else {
 		print "$_[0].txt finns inte. Allt är johans fel...\n";
 	}
-	
-	for my $line (@uniprot_entry){
-		if ($line =~ m/^AC\s+(.*);/){
-			my $new_uniprotID = $1;
+
+	for my $line (@uniprot_entry) {
+		if ( $line =~ m/^AC\s+(.*?);/ ) { #Matches the first UniprotID of the synonyms. 
+			$new_uniprotID = $1;
 		}
 	}
 	return $new_uniprotID;
