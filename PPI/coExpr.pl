@@ -7,45 +7,49 @@ use LWP::Simple;
 my $infile = $ARGV[0]; 
 my $outfile = $ARGV[1]; #outfile
 
-open( IN, $infile) || die "Could not open $infile: $!, $?";
-open(UT, ">$outfile") || die "Could not open $outfile: $!, $?";
+open(my $IN, $infile) || die "Could not open $infile: $!, $?";
+open(my $UT, ">", "$outfile") || die "Could not open $outfile: $!, $?";
 
-my $arrExpID_path = "/home/simon/workspace/GoldStandard/coExpr/ArrExID"; #Change to fit your directory structure 
-my $coExp_path = "/home/simon/workspace/GoldStandard/coExpr/coExpr_querys"; #   -||-
+my $arrExpID_path = "/home/simon/workspace/GoldStandard/coExpr/all_testID"; #Change to fit your directory structure 
+my $coExp_path = "/home/simon/workspace/GoldStandard/coExpr/all_testQuery"; #   -||-
 my $arrExpIdA;
 my $arrExpIdB;
 my @klippt;
 my $coExpScore;
 
-while (<IN>){
+while (<$IN>){
 	chomp($_);
 	@klippt = split(/\t/, $_);
 	
 	#Maps UniprotID to arrayExpressionID
-	$arrExpIdA = &ArrExID($klippt[0]);  #`/usr/bin/perl conv_uniprotID_to_arrayexpressID.pl $klippt[0]`;
-	$arrExpIdB = &ArrExID($klippt[1]);  #`/usr/bin/perl conv_uniprotID_to_arrayexpressID.pl $klippt[1]`;
+	$arrExpIdA = &ArrExID($klippt[0]);
+	$arrExpIdB = &ArrExID($klippt[1]);
+	print "$arrExpIdA\t$arrExpIdB\n";
 	
 	#Gets coExpression score if it exists
 	if( ($arrExpIdA!~/"N\/A"/) && ($arrExpIdA ne $arrExpIdB) ){
 		$coExpScore = &mem_yeast_ppi($arrExpIdA, $arrExpIdB);
 	}
 	
-#	print "$coExpScore\n";
-	print UT "$_\t$coExpScore\n";
-#	print UT "$_\n";
+	#Sets score to N/A if &mem_yeast_ppi has not returned any score
+	if( !($coExpScore =~ m/e/) ){
+		$coExpScore = "N/A";
+	}
+	
+	print $UT "$_\t$coExpScore\n";
 }
 
 sub ArrExID{
-	my $organism ="scerevisiae";
-	my $target_database = "AFFY_YG_S98";
+	my $organism ="scerevisiae"; #Choose your organism
+	my $target_database = "AFFY_YG_S98"; #Choose your platform
 	my $uniprot = $_[0];
 	my $ID;
 	
 	#Checks if ArrExID-queryt has already been done and if so reads it from local file
 	if(-e "$arrExpID_path/$uniprot.arrExpID"){
-		open(uniprot, "$arrExpID_path/$uniprot.arrExpID");
-		return <uniprot>;
-		close uniprot;
+		open(ID_IN, "$arrExpID_path/$uniprot.arrExpID");
+		return <ID_IN>;
+		close ID_IN;
 	}
 	else{
 		my $url = "http://biit.cs.ut.ee/gprofiler/gconvert.cgi?organism=$organism&output=txt&target=$target_database&query=$uniprot";
@@ -60,9 +64,9 @@ sub ArrExID{
 		if ($big_line =~ m/<pre>(.*)<\/pre>/) {
 			my @array = split(/\t/, $1);
 			$ID = $array[3];
-			open(ID_UT, ">$arrExpID_path/$uniprot.arrExpID");
-			print ID_UT $ID;
-			close ID_UT;
+			open(my $ID_UT, ">", "$arrExpID_path/$uniprot.arrExpID");
+			print $ID_UT $ID;
+			close $ID_UT;
 		}
 		return $ID;
 	}
@@ -75,9 +79,9 @@ sub mem_yeast_ppi{
 	
 	#Checks if ArrExID-queryt has already been done and if so reads it from local file
 	if(-e "$coExp_path/$affyIDA.coExp"){
-		open(Expr, "$coExp_path/$affyIDA.coExp");
+		open(Expr_IN, "$coExp_path/$affyIDA.coExp");
 		
-		my @query = <Expr>;
+		my @query = <Expr_IN>;
 		
 		for my $line (@query) {
 			chomp($line) ;
@@ -100,7 +104,11 @@ sub mem_yeast_ppi{
 #		return <Expr>;
 #		close Expr;
 	}
-	
+
+	elsif($affyIDA =~ m/N\/A/){ #If the first protein does not have a arrayExpressionID
+		return;
+	}
+
 	else{
 		my $url = "http://biit.cs.ut.ee/mem/index.cgi?dc=A-AFFY-27&dist=spearman&output=scores&limit=100&query=$affyIDA" ; #define url
 			#query=203325_s_at --- if the query is in the form of valid affymetrix id the query can be done without additional probset selection
@@ -114,9 +122,9 @@ sub mem_yeast_ppi{
 		print "Hämtar CoExpression-data för $affyIDA\n";
 		my $query = get $url ; #perform query
 		#print "$query\n";
-		open(ID_UT, ">$coExp_path/$affyIDA.coExp");
-		print ID_UT $query;
-		close ID_UT;
+		open(my $Expr_UT, ">", "$coExp_path/$affyIDA.coExp") or die "Couldn't open: $affyIDA, $!, $?";
+		print $Expr_UT $query;
+		close $Expr_UT;
 		
 		my @query = split(/\n/, $query) ; #split query in array, so that every line in output would be one variable in array
 		
