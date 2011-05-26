@@ -15,7 +15,6 @@ while(<$IN>){
 	chomp($_);
 	my @guld = split(/\t/, $_);
 	
-	
 	my $seqA = &seq($guld[0]);
 	my $seqB = &seq($guld[1]);	
 	print UT "$_\t$seqA\t$seqB\n";
@@ -30,8 +29,8 @@ sub seq{
 	my $fasta;
 
 	#Checks if the sequence exists localy
-	if(-e "$seqPath$uniprotID"){
-		open(seq_in, "$seqPath$uniprotID");
+	if(-e "$seqPath$uniprotID.fasta"){
+		open(seq_in, "$seqPath$uniprotID.fasta");
 		$fasta = <seq_in>;
 		close seq_in;
 	}
