@@ -75,7 +75,8 @@ sub ArrExID{
 sub mem_yeast_ppi{
 	my $affyIDA = $_[0];
 	my $affyIDB = $_[1];
-#	my $Expr;
+	
+	$affyIDA =~ s/\///g; #If the ID contains any / they are removed. Otherwise there will be an error when trying to store the query to file
 	
 	#Checks if ArrExID-queryt has already been done and if so reads it from local file
 	if(-e "$coExp_path/$affyIDA.coExp"){
@@ -99,13 +100,10 @@ sub mem_yeast_ppi{
 			else {
 				next ;
 			}
-		}
-		
-#		return <Expr>;
-#		close Expr;
+		}		
 	}
 
-	elsif($affyIDA =~ m/N\/A/){ #If the first protein does not have a arrayExpressionID
+	elsif($affyIDA =~ m/N\/A/){ #If the first protein does not have a arrayExpressionID. 
 		return;
 	}
 
@@ -121,7 +119,6 @@ sub mem_yeast_ppi{
 		
 		print "Hämtar CoExpression-data för $affyIDA\n";
 		my $query = get $url ; #perform query
-		#print "$query\n";
 		open(my $Expr_UT, ">", "$coExp_path/$affyIDA.coExp") or die "Couldn't open: $affyIDA, $!, $?";
 		print $Expr_UT $query;
 		close $Expr_UT;
@@ -137,10 +134,6 @@ sub mem_yeast_ppi{
 				#atm I only print the variables out into STDOUT.. one can do filtering or other kind of manipulation at this point
 				#print join("\t", $score, $gene, $affy_id, $gene_desc), "\n" ;
 				if ($affyIDB =~ m/$affy_id/i) {
-#					chomp($score);
-#					open(ID_UT, ">$coExp_path/$affyIDA\_$affyIDB.coExp");
-#					print ID_UT $score;
-#					close ID_UT;
 					print "tjo $score\n";
 					return "$score";
 				}
@@ -150,5 +143,4 @@ sub mem_yeast_ppi{
 			}
 		}
 	}
-	
 }
