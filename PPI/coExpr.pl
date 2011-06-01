@@ -28,7 +28,7 @@ while (<$IN>){
 	
 	#Gets coExpression score if it exists
 	if( ($arrExpIdA!~/"N\/A"/) && ($arrExpIdA ne $arrExpIdB) ){
-		$coExpScore = &mem_yeast_ppi($arrExpIdA, $arrExpIdB);
+		$coExpScore = &mem_ppi($arrExpIdA, $arrExpIdB);
 	}
 	
 	#Sets score to N/A if &mem_yeast_ppi has not returned any score
@@ -72,7 +72,7 @@ sub ArrExID{
 	}
 }
 
-sub mem_yeast_ppi{
+sub mem_ppi{
 	my $affyIDA = $_[0];
 	my $affyIDB = $_[1];
 	my $platform = "A-AFFY-44"; #Choose your platform
