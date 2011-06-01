@@ -75,6 +75,7 @@ sub ArrExID{
 sub mem_yeast_ppi{
 	my $affyIDA = $_[0];
 	my $affyIDB = $_[1];
+	my $platform = "A-AFFY-44"; #Choose your platform
 	
 	$affyIDA =~ s/\///g; #If the ID contains any / they are removed. Otherwise there will be an error when trying to store the query to file
 	
@@ -108,7 +109,7 @@ sub mem_yeast_ppi{
 	}
 
 	else{
-		my $url = "http://biit.cs.ut.ee/mem/index.cgi?dc=A-AFFY-27&dist=spearman&output=scores&limit=100&query=$affyIDA" ; #define url
+		my $url = "http://biit.cs.ut.ee/mem/index.cgi?dc=$platform&dist=spearman&output=scores&limit=100&query=$affyIDA" ; #define url
 			#query=203325_s_at --- if the query is in the form of valid affymetrix id the query can be done without additional probset selection
 			#      to convert gene ids to affy_ids one can use http://biit.cs.ut.ee/gprofiler/gconvert.cgi for bulk conversion
 			#limit=100000 --- limits the number of genes in the output -- insanely large number will output all probesets on the platform, ordered by coexpression similarty to query gene
