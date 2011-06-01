@@ -12,7 +12,7 @@ open( my $UT, ">", "$outfile" ) || die "Could not open $outfile: $!, $?";
 
 my $uniprot_path = "/home/simon/workspace/Data/uniprot_entries/bajs";
 
-  while (<$IN>) {
+while (<$IN>) {
 	my @klippt   = split( /\t/, $_ );
 	my $uniprotA = $klippt[0];
 	my $uniprotB = $klippt[1];
@@ -46,6 +46,7 @@ sub map {
 	for my $line (@uniprot_entry) {
 		if ( $line =~ m/^AC\s+(.*?);/ ) { #Matches the first UniprotID of the synonyms. 
 			$new_uniprotID = $1;
+			last; #Jump out of loop in case there are more rows with synonyms. We only want the first one
 		}
 	}
 	return $new_uniprotID;
